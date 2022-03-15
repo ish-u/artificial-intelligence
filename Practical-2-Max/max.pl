@@ -2,8 +2,8 @@
 % numbers X and Y.
 max(X, Y, M) :-
     (   X==Y,
-        write("Both are EQUAL")
+        write("Both are EQUAL"), !
     ;   X>Y,
-        M is X
+        M is X, !
     ;   M is Y
     ).

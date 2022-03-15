@@ -192,3 +192,61 @@ translate([H|T], L) :-
 
 
 
+% n-th element
+nth_element(1, [X|_], X).
+nth_element(N, [_|T], X) :-
+    N1 is N-1,
+    nth_element(N1, T, X).
+
+% max element
+% maxlist([], 0).
+% maxlist([H|T], M) :-
+    % (   maxlist(T, M1),
+    %     M is M1
+    % ;   M1<H
+    % ->  M is H,
+    %     write(M)
+    % ).
+    % write(M1),
+    % (   H<M1
+    % ->  M is M1
+    % ).
+max(X, Y, M) :-
+    (   X>=Y,
+        M is X, !
+    ;   M is Y
+    ).
+maxlist([M], M).
+maxlist([H|T], M) :-
+    (   maxlist(T, M1),
+        M1>=H,
+        M is M1, !
+    ;   M is H
+    ).
+
+
+% insert n-th element
+insert_nth(H, 1, L, [H|L]).
+insert_nth(I, N, [H|T], R) :-
+    N1 is N-1,
+    insert_nth(I, N1, T, R1),
+    conc([H], R1, R), !.
+
+% delete n-th element
+delete_nth(1, [_|L], L).
+delete_nth(N, [H|T], R) :-
+    N1 is N-1,
+    delete_nth(N1, T, R1),
+    conc([H], R1, R), !.
+
+% merge list
+merge([], [], []) :- !.
+merge([], L, L) :- !.
+merge(L, [], L) :- !.
+merge([H1|T1], [H2|T2], L) :-
+    (   H1=<H2,
+        merge(T1, [H2|T2], L1),
+        conc([H1], L1, L), !
+    ;   merge([H1|T1], T2, L2),
+        conc([H2], L2, L)
+    ).

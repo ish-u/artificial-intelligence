@@ -18,3 +18,4 @@ oddlength(L) :-
     lengthList(L, X),
     Y is X mod 2,
     Y==1.
+
