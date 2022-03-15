@@ -1,8 +1,8 @@
 % 4. Write a program in PROLOG to implement generate_fib(N,T) where T represents the
 % Nth term of the fibonacci series.
 % base case
-generate_fib(0, 1).
-generate_fib(1, 1).
+generate_fib(0, 1) :- !.
+generate_fib(1, 1) :- !.
 % recursive case
 generate_fib(N, T) :-
     N>0,

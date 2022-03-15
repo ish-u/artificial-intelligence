@@ -1,7 +1,7 @@
 % 3. Write a program in PROLOG to implement factorial (N, F) where F represents the
 % factorial of a number N.
 % base case
-factorial(0, 1).
+factorial(0, 1) :- !.
 % recursive case
 factorial(N, F) :-
     N>0,
