@@ -1,6 +1,5 @@
 % facts
 % binary relations 
-parent(tom, bob).
 parent(pam, bob).
 parent(tom, bob).
 parent(tom, liz).
@@ -42,6 +41,18 @@ sister(X, Y) :-
     X\=Y.
 hasChild(X) :-
     parent(X, _).
+happy(X) :-
+    hasChild(X).
+hasTwoChildren(X) :-
+    parent(X, Y),
+    sister(_, Y).
+grandchild(X, Z) :-
+    parent(Z, Y),
+    parent(Y, X). 
+aunt(X, Y) :-
+    parent(Z, Y),
+    sister(X, Z).
+
 
 %  recursive relation 
 predecessor(X, Z) :-
@@ -72,12 +83,12 @@ member(X, [_|T]) :-
     member(X, T).
 
 % concatenation
-conc([], L, L).
+conc([], L, L) :- !.
 conc([X|L1], L2, [X|L3]) :-
     conc(L1, L2, L3).
 
 % write list
-writeList([]).
+writeList([]) :- !.
 writeList([H|T]) :-
     write(H),
     write('\n'),
@@ -95,6 +106,7 @@ sumList([], 0).
 sumList([H|T], S) :-
     sumList(T, S1),
     write(S1),
+    write('\n'),
     S is H+S1.
 
 % reverse list
@@ -105,13 +117,30 @@ sumList([H|T], S) :-
 % last element
 % last(Item,List):-
 %     conc(_,[Item],List).
-last(X, [_, X]).
+last(X, [_, X]) :- !.
 last(Item, [_|T]) :-
     last(Item, T).
 
+% delete last three
+delete_last(L, L1) :-
+    conc(L1, [_, _, _], L).
+
+% delete first three
+delete_first(L, L1) :-
+    conc([_, _, _], L1, L).
+
+% delete last element
+delete_last_element(L, L1) :-
+    conc(L1, [_], L).
+
+
 % add an element to list
 % add(X, L, [X|L]).
-add(X, L, [L|X]).
+add(X, L, [X|L]).
+
+% add an element to the back of the List
+add_last(X, L, L1) :-
+    conc([X], L, L1).
 
 % delete an element from list
 delete(X, [X], []).
@@ -123,10 +152,20 @@ delete(X, [Y|L], [Y|L1]) :-
 %     delete(X, L),
 %     write(L).
 
+% delete as insert
+insertUsingDelete(X, L, BL) :-
+    delete(X, BL, L).
+
 % sublist
 subList(S, L) :-
     conc(_, L2, L),
     conc(S, _, L2).
+
+% subset([], []).    
+% subset([H|T], [H|S]) :-
+%     subset(T, S).
+% subset(L, [_|S]) :-
+%     subset(L, S).
 
 % permutation
 insert(X, L, L1) :-
@@ -191,6 +230,26 @@ translate([H|T], L) :-
     conc([A], L1, L).
 
 
+%% subste
+subset([], []).
+subset([First|Rest], [First|Sub]) :-
+    subset(Rest, Sub).
+
+subset([_|Rest], Sub) :-
+    subset(Rest, Sub).
+
+dividelist([], [], []).
+dividelist([X], [X], []).
+dividelist([X, Y|List], [X|List1], [Y|List2]) :-
+    dividelist(List, List1, List2).
+
+flat([H|T], F) :-
+    flat(H, L1),
+    flat(T, L2),
+    conc(L1, L2, F).
+flat([], []).
+flat(X, [X]).
+
 
 % n-th element
 nth_element(1, [X|_], X).
@@ -225,6 +284,19 @@ maxlist([H|T], M) :-
     ).
 
 
+% sumlist
+sumlist([], 0).
+sumlist([H|T], S) :-
+    sumList(T, S1),
+    S is S1+H.
+    
+
+% ordered List
+checkOrder((_| [H, T])) :-
+    H>T.
+% ordered([H|T]):-
+%     checkOrder()
+
 % insert n-th element
 insert_nth(H, 1, L, [H|L]).
 insert_nth(I, N, [H|T], R) :-
@@ -239,6 +311,13 @@ delete_nth(N, [H|T], R) :-
     delete_nth(N1, T, R1),
     conc([H], R1, R), !.
 
+
+sortAndMerge(L1, L2, L) :-
+    sort(L1, L1_),
+    sort(L2, L2_),
+    merge(L1_, L2_, L).
+    
+
 % merge list
 merge([], [], []) :- !.
 merge([], L, L) :- !.
@@ -250,3 +329,31 @@ merge([H1|T1], [H2|T2], L) :-
     ;   merge([H1|T1], T2, L2),
         conc([H2], L2, L)
     ).
+
+
+% base case
+generate_fib(0, 1) :- !.
+generate_fib(1, 1) :- !.
+% recursive case
+generate_fib(N, T) :-
+    N>0,
+    N>1,
+    N1 is N-1,
+    N0 is N-2,
+    generate_fib(N0, T0),
+    generate_fib(N1, T1),
+    T is T0+T1.
+print_fib(N) :-
+    N> -1,
+    generate_fib(N, T),
+    write(T),
+    write("\t"),
+    N1 is N-1,
+    print_fib(N1).
+
+getFib(0, []).
+getFib(N, L) :-
+    N1 is N-1,
+    getFib(N1, L1),
+    generate_fib(N1, X),
+    conc(L1, [X], L), !.
